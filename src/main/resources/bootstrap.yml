@@ -1,0 +1,36 @@
+### 如果开启配置中心，所有的配置以配置中心的为主
+
+server:
+  port: 40001
+  servlet:
+    context-path: /
+
+### 环境
+spring:
+  application:
+    name: sxmd-auth
+  thymeleaf:
+    cache: false
+    suffix: .html
+  # 环境的选择   dev | prod
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      # 服务的注册
+      discovery:
+        enabled: true
+      server-addr: localhost:8848
+      # 配置中心配置  包含数据库配置和服务启动端口
+      config:
+        enabled: false
+        file-extension: yaml
+        prefix: ${spring.application.name}
+
+
+### mybatis  因为引用了plus 所以这里要用 plus 配置
+mybatis-plus:
+  mapper-locations: com/sxmd/content/*/mapper/*.xml
+  type-aliases-package: com.sxmd
+  configuration:
+    map-underscore-to-camel-case: true

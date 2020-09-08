@@ -1,0 +1,15 @@
+version: '3.1'  # 对应的docker 版本1.13.1+
+services:
+  creeper:
+    image: registry.cn-shanghai.aliyuncs.com/sxmd/summit-project:1.0-SNAPSHOT
+    ports:
+      - "8095:8095"
+    restart: always
+    container_name: summit-project
+    volumes:
+      - /summit/docker-volumes/project/log:/worker/log
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "1"

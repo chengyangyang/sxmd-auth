@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.sxmd</groupId>
+    <artifactId>sxmd-auth</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <description>oauth2 授权中心</description>
+
+    <!-- java 版本管理-->
+    <properties>
+        <dockerfile.maven.plugin.version>1.4.5</dockerfile.maven.plugin.version>
+        <!--跳过docker镜像 打包-->
+        <dockerfile.skip>true</dockerfile.skip>
+        <!--跳过测试 打包-->
+        <test.skip>true</test.skip>
+        <!-- 远程仓库地址 如果没有，填写一个虚拟的地址-->
+        <docker.repostory>registry.cn-shanghai.aliyuncs.com/sxmd</docker.repostory>
+    </properties>
+
+    <!-- 相当于使用父 pom-->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.sxmd</groupId>
+                <artifactId>sxmd-parent</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>com.sxmd</groupId>
+            <artifactId>sxmd-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sxmd</groupId>
+            <artifactId>sxmd-web</artifactId>
+        </dependency>
+        <!-- 使用阿里巴巴注册中心 注册中心需要自己电脑安装-->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+        <!-- 配置中心 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-alibaba-nacos-config</artifactId>
+            <version>2.2.1.RELEASE</version>
+        </dependency>
+        <!-- 授权包-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-oauth2</artifactId>
+        </dependency>
+        <!--模板引擎-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+    </dependencies>
+
+    <!-- 打包工具-->
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/java/</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <skip>${test.skip}</skip>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>UTF-8</encoding>
+                            <!-- 排除excel打包 防止maven 打包统一编码对excel的影响-->
+                            <nonFilteredFileExtensions>
+                                <nonFilteredFileExtension>xlsx</nonFilteredFileExtension>
+                                <nonFilteredFileExtension>xls</nonFilteredFileExtension>
+                            </nonFilteredFileExtensions>
+                            <outputDirectory>${project.build.directory}/config</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <includes>
+                                        <include>bootstrap.yml</include>
+                                        <include>application-dev.yml</include>
+                                        <include>application-prod.yml</include>
+                                        <include>logback-spring.xml</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>com.sxmd.MainApplication</mainClass>
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                        <manifestEntries>
+                            <Class-Path>config/</Class-Path>
+                        </manifestEntries>
+                    </archive>
+                    <excludes>
+                        <include>bootstrap.yml</include>
+                        <include>application-dev.yml</include>
+                        <include>application-prod.yml</include>
+                        <include>logback-spring.xml</include>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.7</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- docker 打包插件配置-->
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>${dockerfile.maven.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>default</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                            <goal>push</goal>
+                        </goals>
+                        <configuration>
+                            <username>y390518881</username>
+                            <password>xxxxx</password>
+                            <skip>${dockerfile.skip}</skip>
+                            <contextDirectory>${project.basedir}</contextDirectory>
+                            <repository>${docker.repostory}/${project.artifactId}</repository>  <!--镜像名称-->
+                            <tag>${project.version}</tag>  <!--镜像标签-->
+                            <buildDirectory>${project.build.directory}</buildDirectory>
+                            <useMavenSettingsForAuth>false</useMavenSettingsForAuth>
+                            <verbose>true</verbose>
+                            <buildArgs>
+                                <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>  <!--构建时传递的参数-->
+                            </buildArgs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+
+    <repositories>
+        <repository>
+            <id>rdc-releases</id>
+            <url>https://repo.rdc.aliyun.com/repository/49712-release-CKzyk5/</url>
+        </repository>
+        <repository>
+            <id>rdc-snapshots</id>
+            <url>https://repo.rdc.aliyun.com/repository/49712-snapshot-6kC7KB/</url>
+        </repository>
+    </repositories>
+
+
+</project>
