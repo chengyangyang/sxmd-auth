@@ -7,7 +7,7 @@
     <groupId>com.sxmd</groupId>
     <artifactId>sxmd-auth</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <description>oauth2 授权中心</description>
+    <description>oauth2 授权服务中心</description>
 
     <!-- java 版本管理-->
     <properties>
@@ -37,11 +37,11 @@
     <dependencies>
         <dependency>
             <groupId>com.sxmd</groupId>
-            <artifactId>sxmd-common</artifactId>
+            <artifactId>sxmd-web</artifactId>
         </dependency>
         <dependency>
             <groupId>com.sxmd</groupId>
-            <artifactId>sxmd-web</artifactId>
+            <artifactId>sxmd-generate</artifactId>
         </dependency>
         <!-- 使用阿里巴巴注册中心 注册中心需要自己电脑安装-->
         <dependency>
@@ -52,7 +52,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-alibaba-nacos-config</artifactId>
-            <version>2.2.1.RELEASE</version>
         </dependency>
         <!-- 授权包-->
         <dependency>

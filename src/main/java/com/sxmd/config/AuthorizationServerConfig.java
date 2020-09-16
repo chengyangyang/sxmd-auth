@@ -1,6 +1,7 @@
 package com.sxmd.config;
 
 import com.sxmd.base.BaseUser;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,10 +34,18 @@ import java.util.Map;
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
+    /**
+     * jwt 密钥前缀，和授权中心保持一致
+     */
+    private static final String PRE_SIGNING_KEY = "SXMD-";
+
     @Resource
     private DataSource dataSource;
     @Resource
     private AuthenticationManager authenticationManager;
+
+    @Value("${sxmd.jwt.signing-key:}")
+    private String signingKey;
 
     @Bean
     public JdbcClientDetailsService jdbcClientDetailsService() {
@@ -125,7 +134,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 return enhancedToken;
             }
         };
-        converter.setSigningKey("123");
+        converter.setSigningKey(PRE_SIGNING_KEY + signingKey);
         return converter;
     }
 

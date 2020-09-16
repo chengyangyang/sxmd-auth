@@ -9,17 +9,17 @@ server:
 spring:
   application:
     name: sxmd-auth
-  thymeleaf:
-    cache: false
-    suffix: .html
+    #thymeleaf:
+    #cache: false
+    #suffix: .html
   # 环境的选择   dev | prod
   profiles:
-    active: dev
+    active: dev,generate
   cloud:
     nacos:
       # 服务的注册
       discovery:
-        enabled: true
+        enabled: false
       server-addr: localhost:8848
       # 配置中心配置  包含数据库配置和服务启动端口
       config:

@@ -1,0 +1,33 @@
+###====================================###
+###          代码生成配置               ###
+###====================================###
+
+### 注意这里省略了数据库配置及mybatis-plus 配置。
+### 使用示例 spring.profiles.active=dev,generate
+
+### 访问路径 http://ip:port/generate/list
+
+### freemarker 配置支持
+spring:
+  freemarker:
+    cache: false
+    suffix: .ftl
+    template-loader-path: classpath:/templates/ftl/
+    settings:
+      template_update_delay: 0
+      classic_compatible: true
+
+
+# 支持 postgresql /mysql/
+# generator 配置
+sxmd:
+  # 数据库的选择
+  basedate: mysql
+  #  table表名称转化为java类的名称策略（默认都会进行驼峰转化）  0 原文件名称  1 去掉第一个_前面的部分  或者填写自己想要的名称，规则和表名称命名相同
+  #  文件名称也遵循此规律
+  table-name-to-java-name-strategy: 0
+  #sql 类型转化为  Java 类型
+  sql-type-to-java-type: "{decimal: 'BigDecimal',text: 'String',varchar: 'String',timestamp: 'LocalDateTime',bool: 'Boolean',
+  int4: 'Integer',date: 'LocalDate',int: 'Integer',bit: 'Boolean',bigint: 'Long',longtext: 'String',longblob: 'String',tinyint: 'Integer',datetime: 'LocalDateTime'}"
+  # 字段过滤 主要针对entity 不生成的字段
+  filter-entity: id
