@@ -1,4 +1,4 @@
-package com.sxmd.content;
+package com.sxmd.content.login;
 
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.stereotype.Controller;

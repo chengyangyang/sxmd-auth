@@ -25,6 +25,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Resource
     private UserDetailsService userDetailsService;
 
+
+    private static final String[] IGNORE_URL = {
+            "/login",
+            "/login-error",
+            "/oauth/authorize",
+            "/oauth/token",
+            "/base-user/register",
+            "/swagger-ui/**",
+            "/swagger-resources/**",
+            "/v2/api-docs",
+            "/doc.html",
+            "/webjars/**",
+            "/generate/**"
+    };
+
     @Override
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -35,8 +50,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.httpBasic().and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/login", "/login-error", "/oauth/authorize",
-                        "/oauth/token")
+                .antMatchers(IGNORE_URL)
                 .permitAll().anyRequest().authenticated()
                 .and()
                 .formLogin().loginPage("/login").failureUrl("/login-error");

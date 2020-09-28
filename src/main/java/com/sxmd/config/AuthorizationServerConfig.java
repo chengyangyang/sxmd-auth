@@ -64,15 +64,15 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         //这个地方指的是从jdbc查出数据来存储
         clients.withClientDetails(jdbcClientDetailsService());
-//        clients.inMemory()
-//                .withClient("sxmd")
-//                .secret(passwordEncoder.encode("sxmd"))
-//                .scopes("service")
-//                // 登录后是否自动授权
-//                .autoApprove(false)
-//                .authorizedGrantTypes("implicit", "refresh_token", "password", "authorization_code")
-//                .redirectUris("http://localhost:22225/")
-//                .accessTokenValiditySeconds(12 * 300);//5min过期
+///        clients.inMemory()
+///                .withClient("sxmd")
+///                .secret(passwordEncoder.encode("sxmd"))
+///                .scopes("service")
+///                // 登录后是否自动授权
+///                .autoApprove(false)
+///                .authorizedGrantTypes("implicit", "refresh_token", "password", "authorization_code")
+///                .redirectUris("http://localhost:22225/")
+///                .accessTokenValiditySeconds(12 * 300);//5min过期
     }
 
 
